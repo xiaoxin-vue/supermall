@@ -3,13 +3,19 @@
   <nav-bar class="home-nav">
     <div slot="center">购物街</div>
   </nav-bar>
-  <scroll class="content">
-    <home-swiper :banners="banners"/>
+  <scroll class="content" 
+          ref="scroll" 
+          :probe-type-num="3" 
+          @scroll="getPosition" 
+          :pull-up-load="true"
+          @pullingUp="loadMore">
+    <home-swiper :banners="banners"/> 
     <home-recommend-view :recommends="recommends"/>
     <home-feature-view/>
     <tab-control class="tab-control" :title="['流行','新款','精选']" @tabClick="tabClick"/>
     <goods-list :goods="goods[currentData].list"/>
   </scroll>
+  <back-top @click.native="backClick" v-show="isShowBackTop"/>
 </div>
 </template>
 
@@ -22,6 +28,7 @@ import NavBar from 'components/common/navbar/NavBar'
 import Scroll from 'components/common/scroll/Scroll'
 import TabControl from 'components/content/tabControl/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
+import BackTop from 'components/content/backTop/BackTop'
 
 import {getHomeMultidata, getHomeGoods} from 'network/home'
 
@@ -36,7 +43,8 @@ export default {
         'new': {page: 0, list: []}, 
         'sell': {page: 0, list: []}  
       },
-      currentData: 'pop'
+      currentData: 'pop',
+      isShowBackTop: false
     }
   },
   components: {
@@ -46,7 +54,8 @@ export default {
     HomeFeatureView,
     TabControl,
     GoodsList,
-    Scroll
+    Scroll,
+    BackTop
   },
   created() {
     // 1.请求多个数据
@@ -72,6 +81,20 @@ export default {
           this.currentData = 'sell';
       }
     },
+    backClick() {
+      this.$refs.scroll.scrollTo(0, 0);
+    },
+    getPosition(position) {
+      // console.log(position);
+      this.isShowBackTop = (-position.y) > 1000;
+    },
+    loadMore() {
+      // this.$refs.scroll是scrol组件，里面的data（scroll）包含bs的全部属性
+      // console.log(this.$refs.scroll.scroll);
+      this.getHomeGoods(this.currentData);
+      
+      this.$refs.scroll.scroll.refresh();
+    },
     // 网络请求相关方法
     getHomeMultidata() {
       getHomeMultidata().then(res => {
@@ -84,6 +107,9 @@ export default {
       getHomeGoods(type, page).then(res => {
         this.goods[type].list.push(...res.data.data.list);
         this.goods[type].page += 1;
+
+        // 结束上拉加载行为，使其再次刷新数据
+        this.$refs.scroll.scroll.finishPullUp();
       })  
     }
   }
@@ -94,6 +120,7 @@ export default {
 #home {
   /* padding-top: 44px; */
   height: 100vh;
+  position: relative;
 }
 
 .home-nav {
@@ -119,9 +146,9 @@ export default {
   top: 44px;
   left: 0;
   right: 0;
-  /* bottom: 49px; */
+  bottom: 49px;
   overflow: hidden;
-  /* height: calc(100% - 93px);
-  margin-top: 44px; */
+  /* height: calc(100% - 93px);*/
+  /* margin-top: 44px;  */
 }
 </style>
