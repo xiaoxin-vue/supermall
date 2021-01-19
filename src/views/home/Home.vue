@@ -39,9 +39,11 @@ import BackTop from 'components/content/backTop/BackTop'
 
 import {getHomeMultidata, getHomeGoods} from 'network/home'
 import {debounce} from 'common/utils'
+import {itemListenerMixin} from 'common/mixin'
 
 export default {
   name: 'Home',
+  mixins: [itemListenerMixin],
   data() {
     return {
       banners: [],
@@ -77,14 +79,6 @@ export default {
     this.getHomeGoods('new');
     this.getHomeGoods('sell');    
   },
-  mounted() {
-    const refresh = debounce(this.$refs.scroll.refresh, 200);
-    // 1.使用事件总线$bus接收自定义事件并且监听item中图片加载完成，时刻刷新图片加载
-    this.$bus.$on('itemImageLoad', () => {
-      // 也就是为了防止this.$refs.scroll.refresh()函数频繁执行
-      refresh();
-    });
-  },
   activated() {
     // 活跃状态使其滚动到保存的y值位置，并且设置这个滚动时间为0
     this.$refs.scroll.scrollTo(0, this.saveScrollY, 0);
@@ -93,6 +87,9 @@ export default {
   deactivated() {
     // 不活跃时保存滚动y值
     this.saveScrollY = this.$refs.scroll.geScrollY();
+
+    // 不活跃时关闭事件总线上的itemImageLoad事件上的itemImgListener
+    this.$bus.$off('itemImageLoad', this.itemImgListener);
   },
   methods: {
     // 事件监听相关的方法
@@ -108,6 +105,7 @@ export default {
         case 2:
           this.currentData = 'sell';
       }
+      // 让两个tabControl的currentIndex保持一致
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
     },

@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item" @click="itemClick">
-    <img :src="goodsItem.show.img" alt="" @load="imgLoad">
+    <img :src="imageData" alt="" @load="imgLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -20,19 +20,39 @@ export default {
       }
     }
   },
+  computed: {
+    imageData() {
+      return this.goodsItem.image || this.goodsItem.show.img;
+    }
+  },
   methods: {
     imgLoad() {
       // 发射自定义事件到事件总线上
       this.$bus.$emit('itemImageLoad');
+      /*
+      * detail里面加载图片完成后发射自定义事件到事件总线上，detail里面的刷新图片数据refresh()执行，
+      * 为了防止同时使home里面的refresh()执行：
+      * 采用第一种方法：每次不活跃或者销毁时关闭此事件--this.$bus.$off('itemImageLoad', itemImgListener)
+      * 采用第二种方法：根据$route.path路径的不同而发射不同的自定义事件
+      if(this.$route.path.indexOf('home') === 1) {
+        console.log('home');
+        // 发射自定义事件到事件总线上
+        this.$bus.$emit('homeItemImageLoad');  
+      } else if(this.$route.path.indexOf('detail') === 1) {
+        console.log('detail');
+        // 发射自定义事件到事件总线上
+        this.$bus.$emit('detailItemImageLoad'); 
+      }
+      */
     },
     itemClick() {
       this.$router.push('./detail/' + this.goodsItem.iid);
     }
-  },
+  }
 }
 </script>
 
-<style>
+<style scoped>
 .goods-item {
   padding-bottom: 40px;
   position: relative;

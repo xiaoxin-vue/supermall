@@ -23,7 +23,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .goods {
   display: flex;
   /* 开启弹性盒子自动换行 */
