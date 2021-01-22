@@ -18,6 +18,14 @@ import NavBar from 'components/common/navbar/NavBar'
 
 export default {
   name: 'DetailNavBar',
+  // props: {
+  //   currentIndex: {
+  //     type: Number,
+  //     default() {
+  //       return 0
+  //     }
+  //   }
+  // },
   data() {
     return {
       titles: ['商品', '参数', '评论', '推荐'],
@@ -31,6 +39,8 @@ export default {
   methods: {
     titleClick(index) {
       this.currentIndex = index;
+      this.$emit('titleClick', index);
+      // console.log(currentIndex);
     },
     backClick() {
       this.$router.back();
@@ -51,7 +61,6 @@ export default {
 
 .active {
   color: var(--color-tint);
-  border-bottom: 3px solid var(--color-tint);
 }
 
 .back img {

@@ -17,7 +17,7 @@
         <span class="date">{{commentInfo.created | showDate}}</span>
         <span>{{commentInfo.style}}</span>
       </div>
-      <div class="info-imgs" v-if="commentInfo.images.length !== 0">
+      <div class="info-imgs" v-if="isCommentImages">
         <img v-for="(item, index) in commentInfo.images" :src="item" alt="" :key="index">
       </div>
     </div>
@@ -37,6 +37,11 @@ export default {
       }
     }
   },
+  computed: {
+    isCommentImages() {
+      return this.commentInfo.images && this.commentInfo.images.length !== 0;
+    }
+  },
   filters: {
     showDate(value) {
       // 1.将时间戳转化为Date()对象
@@ -44,10 +49,7 @@ export default {
       // 2.将date格式化
       return formatDate(date, 'yyyy-MM-dd hh:mm:ss')
     }
-  },
-  mounted() {
-    // console.log(this.commentInfo)
-  },
+  }
 }
 </script>
 
