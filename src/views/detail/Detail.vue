@@ -32,6 +32,9 @@ import {getDetail, getRecommend, Goods, Shop, GoodsParams} from 'network/detail'
 import {debounce} from 'common/utils'
 import {itemListenerMixin, backTopMixin} from 'common/mixin'
 
+// 从vuex中导入actions方法
+import {mapActions} from 'vuex'
+
 export default {
   name: 'Detail',
   mixins: [itemListenerMixin, backTopMixin],
@@ -47,7 +50,7 @@ export default {
       recommendInfo: [],
       themeTopYs: [],
       positionY: 0,
-      currentIndex: 0,
+      currentIndex: 0
     }
   },
   components: {
@@ -100,6 +103,9 @@ export default {
     this.$bus.$off('itemImageLoad', this.itemImgListener);
   },
   methods: {
+    ...mapActions([
+      'addCart'
+    ]),
     swiperImageLoad() {
       this.$refs.scroll.refresh();
     },
@@ -153,8 +159,17 @@ export default {
       product.price = this.goods.realPrice;
       product.iid = this.iid;
 
-      // 2.将商品添加到购物车
-      this.$store.dispatch('addCart', product)
+      // 2.将商品添加到购物车,同时获取Promise返回的的信息
+      this.addCart(product).then(res =>{
+        // 使用toast组件
+        this.$toast.show(res);
+      })
+
+      /*
+      this.$store.dispatch('addCart', product).then(res => {
+        console.log(res);
+      })
+      */
     }
   }
 }

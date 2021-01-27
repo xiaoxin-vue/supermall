@@ -15,8 +15,16 @@
       </div>
     </div>
     <div class="bar-item bar-right">
-      <div class="cart" @click="addToCart">加入购物车</div>
-      <div class="buy">立即购买</div>
+      <div class="cart" 
+           @click="addToCart"
+           :class="{active: isActive}"
+           @touchstart="changeActive1" 
+           @touchend="changeActive2"
+           >加入购物车</div>
+      <div class="buy"
+           :class="{active1: isActive1}"
+           @touchstart="changeActive3" 
+           @touchend="changeActive4">立即购买</div>
     </div>
   </div>
 </template>
@@ -24,11 +32,29 @@
 <script>
 export default {
   name: 'DetailButtonBar',
-  methods: {
-    addToCart() {
-      this.$emit('addToCart')
+  data() {
+    return {
+      isActive: false,
+      isActive1: false
     }
   },
+  methods: {
+    addToCart() {
+      this.$emit('addToCart');
+    },
+    changeActive1() {
+      this.isActive = true;
+    },
+    changeActive2() {
+      this.isActive = false;
+    },
+    changeActive3() {
+      this.isActive1 = true;
+    },
+    changeActive4() {
+      this.isActive1 = false;
+    }
+  }
 }
 </script>
 
@@ -74,6 +100,7 @@ export default {
 }
 
 .bar-right {
+  padding: 2px 0;
   font-size: 15px;
   line-height: 49px;
 }
@@ -81,10 +108,20 @@ export default {
 .bar-right .cart {
   background-color: #ffe817;
   color: #333;
+  border-radius: 24px 0 0 24px;
 }
 
 .bar-right .buy {
   background-color: #f69;
   color: #fff;
+  border-radius: 0 24px 24px 0;
+}
+
+.bar-right .active {
+  background-color: rgba(255, 232, 23, 0.4);
+}
+
+.bar-right .active1 {
+  background-color: rgba(255, 0, 0, 0.4);
 }
 </style>
