@@ -9,8 +9,8 @@
         <i class="icon shop"></i>
         <span class="text">店铺</span>
       </div>
-      <div>
-        <i class="icon select"></i>
+      <div @click="changeSelect">
+        <i class="icon select" :class="{select2: isSelect}"></i>
         <span class="text">收藏</span>
       </div>
     </div>
@@ -35,7 +35,8 @@ export default {
   data() {
     return {
       isActive: false,
-      isActive1: false
+      isActive1: false,
+      isSelect: false
     }
   },
   methods: {
@@ -53,6 +54,9 @@ export default {
     },
     changeActive4() {
       this.isActive1 = false;
+    },
+    changeSelect() {
+      this.isSelect = !this.isSelect;
     }
   }
 }
@@ -89,6 +93,10 @@ export default {
   height: 22px;
   margin: 6px auto 2px;
   background: url('~assets/img/detail/detail_bottom.png') 0 0/100%;
+}
+
+.bar-left .select2 {
+  background-position: 0 -26px;
 }
 
 .bar-left .service {

@@ -1,8 +1,8 @@
 <template>
   <swiper>
     <swiper-item v-for="(val, key) in banners" :key="key">
-      <a :href="val.link">
-        <img :src="val.image" alt="" @load="imageLoad">
+      <a href="#">
+        <img class="homeSwiperImg" :src="val.image" alt="" @load="imageLoad">
       </a>
     </swiper-item>
   </swiper>
@@ -37,7 +37,7 @@ export default {
         this.isLoad = true;
       }
     }
-  },
+  }
 }
 </script>
 
